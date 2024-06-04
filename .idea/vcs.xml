@@ -2,7 +2,14 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/ACcoding-Dataset" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/CheXmask-Database" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/Chinese_reading_task_eeg_processing" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/MOrgAna" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/fNIRS-experiment-for-automated-driving-scenarios" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/client_projects/ggcmi" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/icesat-cross-point" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/soccermon" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/client_projects/times_to_hospitals_AU" vcs="Git" />
   </component>
 </project>

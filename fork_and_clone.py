@@ -98,16 +98,31 @@ def clone_repo(clone_url):
     else:
         print("Failed to clone the repository.")
 
+def delete_fork(repo_name, user="anniecollins"):
+    url = f"https://api.github.com/repos/{user}/{repo_name}"
+
+    headers = {
+        "Authorization": f"token {GITHUB_PAT}",
+        "Accept": "application/vnd.github.v3+json"
+    }
+    response = requests.delete(url, headers=headers)
+    if response.status_code == 204:
+        print(f"Deleted {user}/{repo_name}!")
+    else:
+        print(f"Failed to delete {user}/{repo_name}!")
 
 if __name__ == "__main__":
     url = 'https://github.com/sebbarb/times_to_hospitals_AU'
 
-    original_owner, repo_name = extract_owner_and_repo(url)
+    for url in github_df['codeLink']:
+        original_owner, repo_name = extract_owner_and_repo(url.replace("http:", "https:").replace("//www.", "//").replace(".git", ""))
+        print(url)
+        print(identify_if_py(original_owner, repo_name))
 
-    if identify_if_py(original_owner, repo_name):
-        clone_url = fork_repo(original_owner, repo_name)
-        print(clone_url)
-        clone_repo(clone_url)
-        print(clone_url)
-    else:
-        print(f"{original_owner}/{repo_name} does not contain a .py file")
+    # if identify_if_py(original_owner, repo_name):
+    #     clone_url = fork_repo(original_owner, repo_name)
+    #     clone_repo(clone_url)
+    #     print(clone_url)
+    #     delete_fork(repo_name)
+    # else:
+    #     print(f"{original_owner}/{repo_name} does not contain a .py file")
