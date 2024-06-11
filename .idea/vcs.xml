@@ -3,13 +3,38 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/client_projects/ACcoding-Dataset" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/AllenSDK" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/AntAir-ICE" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/CASM-dataset" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/client_projects/CheXmask-Database" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/client_projects/Chinese_reading_task_eeg_processing" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/Ingrid" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/LabelConvert" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/client_projects/MOrgAna" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/OpenFace" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/OpenScope_CA_Analysis" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/Ozone_prediction" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/Patent-figure-segmentor" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/PrimeKG" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/Satellite-imagery-dataset" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/data-processing" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/dbgen" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/encoder4editing" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/experiments" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/client_projects/fNIRS-experiment-for-automated-driving-scenarios" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/figure-segmentation" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/flair" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/flirextractor" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/geemap" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/genome-NycAvi" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/client_projects/ggcmi" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/client_projects/icesat-cross-point" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/labelme" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/measures_collector" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/meg-masc" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/process-complex-data" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/client_projects/soccermon" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/client_projects/stylegan2-pytorch" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/client_projects/times_to_hospitals_AU" vcs="Git" />
   </component>
 </project>

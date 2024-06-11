@@ -38,7 +38,22 @@ def extract_owner_and_repo(url, valid_extensions=[".py"]):
     # Extract the owner and repository name from the matched URL
     original_owner, repo_name = match.groups()
 
+    ### SPECIFIC OVERRIDE
+    if repo_name == "YOLO2COCO":
+        repo_name = "LabelConvert"
+
     return original_owner, repo_name
+
+def get_repo_size(original_owner, repo_name):
+    headers = {
+        "Authorization": f"token {GITHUB_PAT}",
+        "Accept": "application/vnd.github.v3+json"
+    }
+
+    master = requests.get('https://api.github.com/repos/' + original_owner + '/' + repo_name, headers=headers)
+    master = master.json()
+
+    return master['size']
 
 def identify_if_py(original_owner, repo_name):
 
@@ -47,8 +62,13 @@ def identify_if_py(original_owner, repo_name):
         "Accept": "application/vnd.github.v3+json"
     }
 
-    master = requests.get('https://api.github.com/repos/' + original_owner + '/' + repo_name + '/branches/master', headers = headers)
+    master = requests.get('https://api.github.com/repos/' + original_owner + '/' + repo_name+ '/branches/master', headers = headers)
     master = master.json()
+
+    # Check if URL valid
+    if "status" in master.keys():
+        return False
+
     head_tree_sha = master['commit']['commit']['tree']['sha']
 
     tree = requests.get('https://api.github.com/repos/' + original_owner + '/' + repo_name + '/git/trees/' + head_tree_sha + "?recursive=1", headers = headers)
