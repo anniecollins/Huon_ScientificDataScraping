@@ -69,7 +69,11 @@ def identify_if_py(original_owner, repo_name):
     if "status" in master.keys():
         return False
 
-    head_tree_sha = master['commit']['commit']['tree']['sha']
+    try:
+        head_tree_sha = master['commit']['commit']['tree']['sha']
+    except:
+        print(f"Key error for {original_owner}/{repo_name}")
+        return False
 
     tree = requests.get('https://api.github.com/repos/' + original_owner + '/' + repo_name + '/git/trees/' + head_tree_sha + "?recursive=1", headers = headers)
     tree = tree.json()
@@ -79,6 +83,47 @@ def identify_if_py(original_owner, repo_name):
             return True
 
     return False
+
+# TODO: doubling up
+def identify_filetypes(original_owner, repo_name):
+
+    headers = {
+        "Authorization": f"token {GITHUB_PAT}",
+        "Accept": "application/vnd.github.v3+json"
+    }
+
+    master = requests.get('https://api.github.com/repos/' + original_owner + '/' + repo_name+ '/branches/master', headers = headers)
+    master = master.json()
+
+    # Check if URL valid
+    if "status" in master.keys():
+        return False, False
+
+    try:
+        head_tree_sha = master['commit']['commit']['tree']['sha']
+    except:
+        print(f"Issue with tree structure: {original_owner}/{repo_name}")
+        return False, False
+
+    tree = requests.get('https://api.github.com/repos/' + original_owner + '/' + repo_name + '/git/trees/' + head_tree_sha + "?recursive=1", headers = headers)
+
+    try:
+        tree = tree.json()
+    except:
+        print("Issue with tree structure")
+        return False, False
+
+    # Initialize filetype flags
+    contains_py = False
+    contains_r = False
+
+    for file in tree['tree']:
+        if file['path'][-3:] == ".py":
+            contains_py = True
+        elif file['path'][-2:] in [".r", ".R"]:
+            contains_r = True
+
+    return contains_py, contains_r
 
 def fork_repo(original_owner, repo_name):
     url = f"https://api.github.com/repos/{original_owner}/{repo_name}/forks"

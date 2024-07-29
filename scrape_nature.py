@@ -32,12 +32,20 @@ def parse_article(article_data):
     journal_id = journal_meta['journal-id']
     this_article['journalId'] = [journal_id[0]['#text'] if isinstance(journal_id, list) else journal_id['#text']]
     this_article['doi'] = [article_meta['article-id'][-1]['#text']]
-    this_article['title'] = [article_meta['title-group']['article-title']['#text']]
+    this_article['url'] = ["https://doi.org/"+article_meta['article-id'][-1]['#text']]
+    this_article['title'] = [article_meta['title-group']['article-title']['#text']] if '#text' in article_meta['title-group']['article-title'].keys() else [None]
 
-    pub_date = article_meta['pub-date'][0]
+    if isinstance(article_meta['pub-date'], dict):
+        pub_date = article_meta['pub-date']
+    else:
+        pub_date = article_meta['pub-date'][0]
     this_article['pubDay'] = int(pub_date['day'])
     this_article['pubMonth'] = int(pub_date['month'])
     this_article['pubYear'] = int(pub_date['year'])
+
+    # I think some articles are not open access so we don't have the back section
+    if 'back' not in article_data.keys():
+        return this_article
 
     back_sec = article_data['back'].get('sec', [])
     if isinstance(back_sec, dict):
@@ -45,14 +53,23 @@ def parse_article(article_data):
 
     for sec in back_sec:
         if sec.get('@sec-type') == "data-availability":
-            ext_link = sec['p'].get('ext-link') if isinstance(sec['p'], dict) else None
+
+            ext_link = None
+            code_text = [None]
+            if 'p' in sec.keys():
+                if isinstance(sec['p'], dict):
+                    ext_link = sec['p'].get('ext-link')
+                    code_text = [sec['p'].get('#text', None)] # else [sec['p']] if isinstance(sec['p'], str) else [str(sec['p'])] if isinstance(sec['p'], list) else [None]
+                elif isinstance(sec['p'], str):
+                    code_text = [sec['p']]
+                elif isinstance(sec['p'], list):
+                    code_text = [str(sec['p'])]
             if isinstance(ext_link, dict):
                 this_article['codeLink'] = [ext_link.get('#text', None)]
             elif isinstance(ext_link, list):
                 this_article['codeLink'] = ["; ".join([link['#text'] for link in ext_link])]
 
-            this_article['codeText'] = [sec['p'].get('#text', None)] if isinstance(sec['p'], dict) else [sec['p']] if isinstance(sec['p'], str) else [str(sec['p'])] if isinstance(sec['p'], list) else [None]
-
+            this_article['codeText'] = code_text
     return this_article
 
 
@@ -63,8 +80,8 @@ def main():
 
     articles = pd.DataFrame()
 
-    for i in tqdm.tqdm(np.arange(1, 1239, 100)):  # There are 1239 articles
-        query = f"?q=python%20journalid:41597%20sort:date&p=100&s={i}&api_key={API_KEY}"
+    for i in tqdm.tqdm(np.arange(1, 12000, 100)):  # There are 1239 articles
+        query = f"?q=(python%20OR%20github)%20year:2023%20sort:date&p=100&s={i}&api_key={API_KEY}"
         url = base + endpoint + query
 
         data = fetch_data(url)
@@ -74,7 +91,7 @@ def main():
             articles = pd.concat([articles, this_article], axis=0)
 
     articles['pubDate'] = pd.to_datetime(articles[['pubDay', "pubMonth", "pubYear"]].rename(columns={'pubDay': "day", 'pubMonth': "month", 'pubYear': "year"}))
-    articles.to_csv(os.path.join("data", "scientific_data_articles.csv"))
+    articles.to_csv(os.path.join("data", "nature_articles.csv"))
 
 
 if __name__ == "__main__":

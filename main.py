@@ -1,26 +1,38 @@
-from data_cleaning import articles
+# from data_cleaning import articles
 from fork_and_clone import *
 from process_files import *
 from tqdm import tqdm
 import pandas as pd
 import shutil
+import os
+from ast import literal_eval
+
 
 def main(github_df, base_dir="client_projects", start=0, end=None, annotated_file=os.path.join("data", "annotated_scientific_data_articles.csv"), invalid_file=os.path.join("data", "invalid_scientific_data_articles.csv")):
 
-    # Read in existing annotated file
-    annotated_df = pd.read_csv(annotated_file)
+    # Read in existing annotated file if it exists
+    if os.path.exists(annotated_file):
+        annotated_df = pd.read_csv(annotated_file)
 
-    # Separate articles that have already been assessed and those to be submitted
-    done_articles = annotated_df[~annotated_df['issues_1'].isna()] # Where issue_1 is not empty
-    todo_articles = annotated_df[annotated_df['issues_1'].isna()]["doi"] # Where issue_1 is empty
+        # Separate articles that have already been assessed and those to be submitted
+        done_articles = annotated_df[~annotated_df['issues_1'].isna()] # Where issue_1 is not empty
+        todo_articles = annotated_df[annotated_df['issues_1'].isna()]["doi"] # Where issue_1 is empty
 
-    # Remove articles that have been completed from `github_df`; reset index so index start and end parameters work as intended
-    github_df = github_df[github_df['doi'].isin(todo_articles)].reset_index(drop=True)
+        # Remove articles that have been completed from `github_df`; reset index so index start and end parameters work as intended
+        github_df = github_df[github_df['doi'].isin(todo_articles)].reset_index(drop=True)
+    else:
+        # Need to create `done_articles` anyways
+        github_df.reset_index(inplace=True, drop=True)
+        done_articles = pd.DataFrame()
 
     # Storage for LLM output
     error_comments_df = pd.DataFrame()
 
-    invalid_urls = pd.read_csv(invalid_file)
+    # Same as above for invalid URLS
+    if os.path.exists(invalid_file):
+        invalid_urls = pd.read_csv(invalid_file)
+    else:
+        invalid_urls = pd.DataFrame()
 
     if end == None:
         end = len(github_df)
@@ -52,6 +64,7 @@ def main(github_df, base_dir="client_projects", start=0, end=None, annotated_fil
                 continue
 
             if identify_if_py(original_owner, repo_name) and get_repo_size(original_owner, repo_name) < 500000:
+            # if github_df['containsPy'].loc[i] and get_repo_size(original_owner, repo_name) < 500000:
                 clone_url = fork_repo(original_owner, repo_name)
                 clone_repo(clone_url)
                 delete_fork(repo_name)
@@ -124,7 +137,20 @@ def main(github_df, base_dir="client_projects", start=0, end=None, annotated_fil
 
 
 if __name__=="__main__":
-    annotated_df, invalid_urls = main(articles.sort_values("pubDate", ascending=False))
-    print(f"Length final df = {len(annotated_df)}")
+    # Read in full dataset
+    articles = pd.read_csv(os.path.join("data", "articles_with_github_filetypes.csv"))
+    articles.codeLink = articles.codeLink.apply(literal_eval)
+
+    # Separate into Nature Communications and Scientific Reports
+    nature_communications = articles[articles['journalId']==41467]
+    scientific_reports = articles[articles['journalId'] == 41598]
+
+    annotated_nature_communications_df, invalid_nature_communications_urls = main(nature_communications.sort_values("pubDate", ascending=False),
+                                                                                  annotated_file=os.path.join("data", "annotated_nature_communications_articles.csv"),
+                                                                                  invalid_file=os.path.join("data", "invalid_nature_communications_articles.csv"))
+    annotated_scientific_reports_df, invalid_scientific_reports_urls = main(scientific_reports.sort_values("pubDate", ascending=False),
+                                                                                  annotated_file=os.path.join("data", "annotated_scientific_reports_articles.csv"),
+                                                                                  invalid_file=os.path.join("data", "invalid_scientific_reports_articles.csv"))
+
     # annotated_df.to_csv(os.path.join("data", "annotated_scientific_data_articles.csv"))
     # invalid_urls.to_csv(os.path.join("data", "invalid_scientific_data_articles.csv"))
